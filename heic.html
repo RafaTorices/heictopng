@@ -1,0 +1,61 @@
+<head>
+    <!-- Librería JQuery de Javascript-->
+    <script src="https://code.jquery.com/jquery-3.6.1.js" integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI=" crossorigin="anonymous"></script>
+    <!-- Librería HEICAny  Convertir ficheros heic a png/jpg -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/heic2any/0.0.3/heic2any.js" integrity="sha512-8NQtcUUILwSOVmrf1vswg70nw9HgXNVZG/lh2mNKzEKN7rxjrrFeApw1dqk5AKFYqAGWZLaL6aMddli7LGPHlg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- Librería estilos Bootstrap -->
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+    <title>HEIC</title>
+</head>
+
+<body>
+    <div class="container m-4">
+        <div class="card">
+            <h5 class="card-header">CONVERSOR HEIC to jpg/png</h5>
+            <div class="card-body">
+                <div class="input-group">
+                    <input type="file" id="ficheroHeic" class="form-control" />
+                </div>
+                <div id="loading" class="text-center m-4">
+                </div>
+                <div class="text-center" id="imagen">
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script>
+    function convertHeic(ficheroHeic) {
+        var fileName = $(ficheroHeic).val();
+        var fileNameExt = fileName.substr(fileName.lastIndexOf('.') + 1);
+        if (fileNameExt == "heic") {
+            $("#imagen").html('');
+            $("#loading").html('<p>Espere un momento...</p>');
+            var blob = $(ficheroHeic)[0].files[0];
+            heic2any({
+                    blob: blob,
+                    toType: "image/jpg",
+                })
+                .then(function(resultBlob) {
+                    var url = URL.createObjectURL(resultBlob);
+                    $("#imagen").html('<a href="' + url + '" target="blank"><img id="foto" class="rounded m - 4" /></a>');
+                    $("#foto").css('width', '200px');
+                    $("#foto").css('height', '150px');
+                    $("#foto").attr("src", url);
+                    $("#loading").html('<p></p>');
+                })
+                .catch(function(error) {
+                    console.log(error.code);
+                    console.log(error.message);
+                });
+        } else {
+            $("#loading").html('<p>No es un fichero HEIC, seleccione otro archivo.</p>');
+        }
+    }
+
+    $("#ficheroHeic").change(function() {
+        convertHeic(this);
+    });
+</script>
